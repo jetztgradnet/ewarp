@@ -16,9 +16,13 @@ public class ErjangContextListener implements ServletContextListener {
 	 */
 	public void contextInitialized(ServletContextEvent sce) {
 		ServletContext context = sce.getServletContext();
-		WebHelper helper = new WebHelper(context);
+		// get parameters from ServletConfig and ServletContext
+		ErjangWebRuntime runtime = ErjangWebRuntime.getErjangRuntime(context);
+		if (runtime == null) {
+			runtime = new ErjangWebRuntime(context);
+		}
 		
-		helper.start();
+		runtime.start();
 	}
 	
 	/* (non-Javadoc)
@@ -26,7 +30,9 @@ public class ErjangContextListener implements ServletContextListener {
 	 */
 	public void contextDestroyed(ServletContextEvent sce) {
 		ServletContext context = sce.getServletContext();
-		WebHelper helper = new WebHelper(context);
-		helper.shutdown();
+		ErjangWebRuntime runtime = ErjangWebRuntime.getErjangRuntime(context);
+		if (runtime != null) {
+			runtime.shutdown();
+		}
 	}
 }

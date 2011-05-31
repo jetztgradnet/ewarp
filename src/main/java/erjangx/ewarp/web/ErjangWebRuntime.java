@@ -9,41 +9,43 @@ import javax.servlet.ServletContext;
 
 import erjangx.ewarp.runtime.ErjangRuntime;
 
-public class WebHelper {
+public class ErjangWebRuntime extends ErjangRuntime {
 	public final static String ERJANG_RUNTIME = ErjangRuntime.class.getName();
 	
 	private final ServletContext context;
 	private final ServletConfig config;
 	
-	public WebHelper(ServletContext context) {
+	public ErjangWebRuntime(ServletContext context) {
 		this(null, context);
 	}
 	
-	public WebHelper(ServletConfig config) {
+	public ErjangWebRuntime(ServletConfig config) {
 		this(config, config.getServletContext());
 	}
 	
-	public WebHelper(ServletConfig config, ServletContext context) {
+	public ErjangWebRuntime(ServletConfig config, ServletContext context) {
 		this.config = config;
 		this.context = context;
 	}
 	
+	/* (non-Javadoc)
+	 * @see erjangx.ewarp.runtime.ErjangRuntime#start()
+	 */
+	@Override
 	public void start() {
 		ErjangRuntime runtime = getErjangRuntime(context);
-		if (runtime != null) {
-			// Erjang runtime is already running
-			return;
+		if (runtime == null) {
+			// store runtime in servlet context
+			context.setAttribute(ERJANG_RUNTIME, this);
 		}
-		// Launch Erjang by running erjang.Main.main(String[]) in a fresh thread
-		runtime = new ErjangRuntime();
 		
-		// configure runtime
-		configureRuntime(runtime);
+		if (!isRunning()) {
+			// configure runtime
+			configureRuntime();
 		
-		runtime.start();
-		
-		// store runtime in servlet context
-		context.setAttribute(ERJANG_RUNTIME, runtime);
+			// Erjang runtime is not yet running
+			super.start();
+		}
 	}
 	
 	/**
@@ -52,7 +54,7 @@ public class WebHelper {
 	 * 
 	 * @param runtime Erjang runtime to configure
 	 */
-	protected void configureRuntime(ErjangRuntime runtime) {
+	protected void configureRuntime() {
 		Properties contextProps = getConfigurationProperties(context);
 		Properties configProps = getConfigurationProperties(config);
 
@@ -61,23 +63,30 @@ public class WebHelper {
 		props.putAll(contextProps);
 		props.putAll(configProps);
 		
-		runtime.init(props);
+		init(props);
 		
 		// TODO provide additional configuration?
 	}
 	
+	/* (non-Javadoc)
+	 * @see erjangx.ewarp.runtime.ErjangRuntime#shutdown()
+	 */
+	@Override
 	public void shutdown() {
-		// get runtime from servlet context
-		ErjangRuntime runtime = getErjangRuntime(context);
-		context.removeAttribute(ERJANG_RUNTIME);
-		
-		if (runtime != null) {
-			runtime.shutdown();
+		try {
+			super.shutdown();
+		}
+		finally {
+			context.removeAttribute(ERJANG_RUNTIME);
 		}
 	}
 	
-	public static ErjangRuntime getErjangRuntime(ServletContext context) {
-		return (ErjangRuntime) context.getAttribute(ERJANG_RUNTIME);
+	public static ErjangWebRuntime getErjangRuntime(ServletContext context) {
+		return (ErjangWebRuntime) context.getAttribute(ERJANG_RUNTIME);
+	}
+	
+	public static boolean hasErjangRuntime(ServletContext context) {
+		return (getErjangRuntime(context) != null);
 	}
 	
 	public static Properties getConfigurationProperties(ServletContext context) {

@@ -17,23 +17,33 @@ import javax.servlet.http.HttpServlet;
 public class ErjangServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	/* (non-Javadoc)
+	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
+	 */
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		
 		ServletContext context = config.getServletContext();
-		// TODO get additional parameters from ServletConfig
-		WebHelper helper = new WebHelper(context);
+		// get parameters from ServletConfig and ServletContext
+		ErjangWebRuntime runtime = ErjangWebRuntime.getErjangRuntime(context);
+		if (runtime == null) {
+			runtime = new ErjangWebRuntime(config, context);
+		}
 		
-		helper.start();
+		runtime.start();
 	}
 	
+	/* (non-Javadoc)
+	 * @see javax.servlet.GenericServlet#destroy()
+	 */
 	@Override
 	public void destroy() {
 		ServletContext context = getServletContext();
-		WebHelper helper = new WebHelper(context);
-		
-		helper.shutdown();
+		ErjangWebRuntime runtime = ErjangWebRuntime.getErjangRuntime(context);
+		if (runtime != null) {
+			runtime.shutdown();
+		}
 		
 		super.destroy();
 	}
