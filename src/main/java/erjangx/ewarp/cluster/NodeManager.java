@@ -43,6 +43,15 @@ public class NodeManager extends AbstractNodeFinder implements NodeFinder, NodeL
 		return false;
 	}
 
+	public void removeAllNodeFinders() {
+		synchronized(locker) {
+			for (NodeFinder nodeFinder : nodeFinders.keySet()) {
+				nodeFinder.removeNodeListener(this);
+			}
+			nodeFinders.clear();
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see erjangx.ewarp.cluster.NodeListener#nodeAdded(erjangx.ewarp.cluster.NodeFinder, java.lang.String)
 	 */
