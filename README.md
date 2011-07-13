@@ -13,8 +13,6 @@ This project is currently work in progress.
  * Java-Erlang web bridge
  * Triggering of Erlang functions on startup/shutdown/specified web calls
 
-As Erjang does currently only work with OTP R13B0x, Erlang apps are restricted to this.
-
 
 ## How to use
 
