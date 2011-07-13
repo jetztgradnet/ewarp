@@ -84,8 +84,10 @@ public class ErjangStatusServlet extends ErjangBaseServlet {
 
 	private void writePlainOutput(PrintWriter writer,
 			Map<String, Map<StatusName, Object>> statuses) {
-		writer.println("Status");
-		writer.println();
+		if (statuses.size() > 1) {
+			writer.println("Status");
+			writer.println();
+		}
 		
 		for (Map.Entry<String, Map<StatusName, Object>> entry : statuses.entrySet()) {
 			String collectorName = entry.getKey();
@@ -161,7 +163,9 @@ public class ErjangStatusServlet extends ErjangBaseServlet {
 		writer.print("Status");
 		writer.print("</title></head>");
 		writer.println("<body>");
-		writer.println("<h1><a name=\"top\">Status</a></h1>");
+		if (statuses.size() > 1) {
+			writer.println("<h1><a name=\"top\">Status</a></h1>");
+		}
 		
 		for (Map.Entry<String, Map<StatusName, Object>> entry : statuses.entrySet()) {
 			String collectorName = entry.getKey();
@@ -204,11 +208,31 @@ public class ErjangStatusServlet extends ErjangBaseServlet {
 	protected List<StatusCollector> getCollectors(HttpServletRequest request) {
 		List<StatusCollector> collectors = new ArrayList<StatusCollector>();
 		
-		// TODO determine collectors from URI
+		// determine collectors from URI
+		String path = request.getPathInfo();
 		
-		collectors.add(new InfoCollector());
-		collectors.add(new ModuleCollector());
-		collectors.add(new ProcessListCollector());
+		String module = path;
+		while (module.startsWith("/")) {
+			module = module.substring(1);
+		}
+		
+		if (module.startsWith("processes")) {
+			collectors.add(new ProcessListCollector());
+		}
+		else if (module.startsWith("modules")) {
+			collectors.add(new ModuleCollector());
+		}
+		else if (module.startsWith("info")) {
+			collectors.add(new InfoCollector());
+		}
+		
+		if ((module == null)
+			|| (module.length() == 0)) {
+			// add default collectors
+			collectors.add(new InfoCollector());
+			collectors.add(new ModuleCollector());
+			collectors.add(new ProcessListCollector());
+		}
 		
 		return collectors;
 	}

@@ -9,8 +9,23 @@
 			erjangx.ewarp.web.ErjangContextListener
 		</listener-class>
 	</listener>
-	<!-- 
-	<servlet/>
-	<servlet-mapping/>
-	 -->
+	<servlet>
+		<servlet-name>status</servlet-name>
+		<servlet-class>erjangx.ewarp.web.ErjangStatusServlet</servlet-class>
+		<!-- 
+		<init-param>
+			<param-name>title</param-name>
+			<param-value>Hello, World</param-value>
+		</init-param>
+		 -->
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>status</servlet-name>
+		<url-pattern>/status/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>status</servlet-name>
+		<url-pattern>/status</url-pattern>
+	</servlet-mapping>
 </web-app>
