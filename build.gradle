@@ -3,7 +3,7 @@ apply plugin:'war'
 apply plugin:'jetty'
 apply plugin:'eclipse'
 
-erjangVersion="0.1"
+erjangVersion="0.1-20110715"
 otpVersion="R13B04"
 slf4jVersion="1.6.1"
 servletVersion="2.5"
