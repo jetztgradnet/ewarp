@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import erjangx.ewarp.runtime.ErjangRuntime;
 import erjangx.ewarp.runtime.stats.InfoCollector;
 import erjangx.ewarp.runtime.stats.ModuleCollector;
+import erjangx.ewarp.runtime.stats.NodeCollector;
 import erjangx.ewarp.runtime.stats.ProcessCollector;
 import erjangx.ewarp.runtime.stats.StatusCollector;
 import erjangx.ewarp.runtime.stats.StatusName;
@@ -225,6 +226,9 @@ public class ErjangStatusServlet extends ErjangBaseServlet {
 		else if (module.startsWith("info")) {
 			collectors.add(new InfoCollector());
 		}
+		else if (module.startsWith("nodes")) {
+			collectors.add(new NodeCollector());
+		}
 		
 		if ((module == null)
 			|| (module.length() == 0)) {
@@ -232,6 +236,7 @@ public class ErjangStatusServlet extends ErjangBaseServlet {
 			collectors.add(new InfoCollector());
 			collectors.add(new ModuleCollector());
 			collectors.add(new ProcessCollector());
+			collectors.add(new NodeCollector());
 		}
 		
 		return collectors;
