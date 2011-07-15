@@ -9,10 +9,16 @@ import erjang.ESeq;
 import erjangx.ewarp.runtime.ErjangRuntime;
 import erjangx.ewarp.util.EObjectIterator;
 
-public class ProcessListCollector extends AbstractStatusCollector {
+/**
+ * Collect process info.
+ * TODO refactor to use {@link AbstractListStatusCollector}.
+ * 
+ * @author wolfgang
+ */
+public class ProcessCollector extends AbstractStatusCollector {
 	public final StatusName PROCESSES = new StatusName("processes", "Processes");
 
-	public ProcessListCollector() {
+	public ProcessCollector() {
 		super("Processes", "processes");
 	}
 
