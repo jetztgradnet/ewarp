@@ -1,6 +1,4 @@
 apply plugin:'java'
-apply plugin:'war'
-apply plugin:'jetty'
 apply plugin:'eclipse'
 
 erjangVersion="0.1"
@@ -18,16 +16,14 @@ repositories {
 
 dependencies {
 	// servlet api
-	providedCompile "javax.servlet:servlet-api:$servletVersion"
+	compile "javax.servlet:servlet-api:$servletVersion"
 	
 	// logging
 	compile "org.slf4j:slf4j-api:$slf4jVersion"
 	compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
-	runtime "org.slf4j:slf4j-jdk14:$slf4jVersion"
 	
 	// erjang, OTP
-	compile files("../erjang/erjang-${erjangVersion}.jar")
-	runtime files("../erjang/otp-${otpVersion}.jar")
+	compile files("../../erjang/erjang-${erjangVersion}.jar")
 	
 	// testing
 	testCompile group: 'junit', name: 'junit', version: '4.8.2'
