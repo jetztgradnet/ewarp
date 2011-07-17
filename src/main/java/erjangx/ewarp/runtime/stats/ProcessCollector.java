@@ -1,57 +1,64 @@
 package erjangx.ewarp.runtime.stats;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import erjang.EAtom;
+import erjang.ECons;
 import erjang.EInternalPID;
+import erjang.EObject;
 import erjang.EProc;
 import erjang.ESeq;
-import erjangx.ewarp.runtime.ErjangRuntime;
-import erjangx.ewarp.util.EObjectIterator;
+import erjangx.ewarp.util.EConvert;
 
 /**
  * Collect process info.
- * TODO refactor to use {@link AbstractListStatusCollector}.
  * 
  * @author wolfgang
  */
-public class ProcessCollector extends AbstractStatusCollector {
-	public final StatusName PROCESSES = new StatusName("processes", "Processes");
+public class ProcessCollector extends AbstractListStatusCollector<String, ProcessInfo> {
+	public final static StatusName PROCESSES = new StatusName("processes", "Processes");
+	
+	// TODO remove, when EProc.am_status is public
+	static final EObject am_status = EAtom.intern("status");
 
 	public ProcessCollector() {
-		super("Processes", "processes");
+		super("Processes", "processes", PROCESSES, true);
 	}
 
 	/* (non-Javadoc)
-	 * @see erjangx.ewarp.runtime.stats.StatusCollector#collectStatus(erjangx.ewarp.runtime.ErjangRuntime, java.util.Map)
+	 * @see erjangx.ewarp.runtime.stats.AbstractListStatusCollector#getIdentifier(erjang.EObject)
 	 */
-	public boolean collectStatus(ErjangRuntime runtime,
-			Map<StatusName, Object> status) {
-		Map<EInternalPID, Object> processInfo = new HashMap<EInternalPID, Object>();
-		
-		ESeq processes = EProc.processes();
-		
-		for (EObjectIterator it = new EObjectIterator(processes); it.hasNext();) {
-			EInternalPID pid = it.next().testInternalPID();
-			if (pid == null) {
-				continue;
-			}
-			EProc proc = null; // TODO lookup process
-			Object info = getStatus(pid, proc);
-			if (info != null) {
-				processInfo.put(pid, info);
-			}
+	@Override
+	protected String getIdentifier(EObject element) {
+		EInternalPID pid = element.testInternalPID();
+		if (pid != null) {
+			return pid.toString();
 		}
-		
-		collect(status, PROCESSES, processInfo);
-		
-		return true;
+		return null;
 	}
 	
-	protected Object getStatus(EInternalPID pid, EProc process) {
-		if (process != null) {
-			return process.process_info();
+	/* (non-Javadoc)
+	 * @see erjangx.ewarp.runtime.stats.AbstractListStatusCollector#getInfo(erjang.EObject)
+	 */
+	@Override
+	protected ProcessInfo getInfo(EObject element) {
+		EInternalPID pid = element.testInternalPID();
+		if (pid == null) {
+			return null;
 		}
-		return pid;
+		
+		String registeredName = EConvert.toString(pid.process_info(EProc.am_registered_name));
+		String initialCall = EConvert.toString(pid.process_info(EProc.am_initial_call));
+		String currentCall = EConvert.toString(pid.process_info(EProc.am_current_function));
+		String status = EConvert.toString(pid.process_info(/*EProc.*/am_status));
+		int messageQueueLength = EConvert.toInteger(pid.process_info(EProc.am_message_queue_len));
+		return new ProcessInfo(pid.toString(), registeredName, initialCall, currentCall, status, messageQueueLength);
+	}
+
+	/* (non-Javadoc)
+	 * @see erjangx.ewarp.runtime.stats.AbstractListStatusCollector#getList()
+	 */
+	@Override
+	protected ECons getDataToCollect() {
+		ESeq processes = EProc.processes();
+		return processes;
 	}
 }

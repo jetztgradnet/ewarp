@@ -3,6 +3,7 @@ package erjangx.ewarp.runtime.stats;
 import erjang.EAtom;
 import erjang.ECons;
 import erjang.EObject;
+import erjang.EPeer;
 
 /**
  * Collect node info.
@@ -10,19 +11,19 @@ import erjang.EObject;
  * @author wolfgang
  */
 public class NodeCollector extends AbstractListStatusCollector<String, String> {
-	public final StatusName NODES = new StatusName("nodes", "Nodes");
+	public final static StatusName NODES = new StatusName("nodes", "Nodes");
 
 	public NodeCollector() {
-		super("nodes", "Nodes");
+		super("nodes", "Nodes", NODES, false);
 	}
 
 	/* (non-Javadoc)
 	 * @see erjangx.ewarp.runtime.stats.AbstractListStatusCollector#getIdentifier(erjang.EObject)
 	 */
 	@Override
-	protected String getIdentifier(EObject handle) {
+	protected String getIdentifier(EObject element) {
 		// we expect the handle to be an atom
-		EAtom node = handle.testAtom();
+		EAtom node = element.testAtom();
 		if (node != null) {
 			return node.getName();
 		}
@@ -33,17 +34,17 @@ public class NodeCollector extends AbstractListStatusCollector<String, String> {
 	 * @see erjangx.ewarp.runtime.stats.AbstractListStatusCollector#getInfo(erjang.EObject)
 	 */
 	@Override
-	protected String getInfo(EObject handle) {
-		return handle.toString();
+	protected String getInfo(EObject element) {
+		// we return a list, so there's no info object
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see erjangx.ewarp.runtime.stats.AbstractListStatusCollector#getList()
 	 */
 	@Override
-	protected ECons getList() {
-		// TODO get nodes list
-		return null;
+	protected ECons getDataToCollect() {
+		return EPeer.getRemoteNodes();
 	}
 
 	/* (non-Javadoc)
