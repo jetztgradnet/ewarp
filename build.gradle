@@ -1,6 +1,8 @@
 group = 'erjangx'
 version = '0.1'
 
+defaultTasks 'assemble'
+
 dependsOnChildren()
 
 repositories {
