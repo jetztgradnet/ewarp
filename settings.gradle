@@ -1,5 +1,6 @@
 [
 	'ewarp-core',
+	'ewarp-web',
 ].each { project -> 
 	include project
 }
