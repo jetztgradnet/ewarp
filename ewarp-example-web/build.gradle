@@ -12,7 +12,6 @@ group = 'erjangx'
 version = '0.1'
 
 repositories {
-	//flatDir(dirs: "../erjang/lib")
 	mavenCentral()
 }
 
