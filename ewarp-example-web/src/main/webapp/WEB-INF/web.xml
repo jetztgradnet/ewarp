@@ -5,19 +5,11 @@
 	version="2.5">
 	<display-name>Erlang Web Application</display-name>
 	<listener>
-		<listener-class>
-			erjangx.ewarp.web.ErjangContextListener
-		</listener-class>
+		<listener-class>erjangx.ewarp.web.ErjangContextListener</listener-class>
 	</listener>
 	<servlet>
 		<servlet-name>status</servlet-name>
 		<servlet-class>erjangx.ewarp.web.stats.ErjangStatusServlet</servlet-class>
-		<!-- 
-		<init-param>
-			<param-name>title</param-name>
-			<param-value>Hello, World</param-value>
-		</init-param>
-		 -->
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>status</servlet-name>
