@@ -25,9 +25,7 @@ public class ErjangStatusServlet extends ErjangBaseServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		PrintWriter writer = null;
 		try {
-			writer = response.getWriter();
 			ErjangRuntime runtime = getRuntime();
 		
 			// get collectors to query
@@ -50,160 +48,48 @@ public class ErjangStatusServlet extends ErjangBaseServlet {
 					response.sendError(HttpServletResponse.SC_NO_CONTENT);
 				}
 				else {
-					// get output format
-					OutputFormat format = getOutputFormat(request);
-					switch (format) {
-					case PLAIN:
-						response.setContentType("text/plain");
-						writePlainOutput(writer, statuses); 
-						break;
-					default:
-					case HTML:
-						response.setContentType("text/html");
-						writeHTMLOutput(writer, statuses); 
-						break;
-					case XML:
-						response.setContentType("text/xml");
-						writeXMLOutput(writer, statuses); 
-						break;
-					case JSON:
-						response.setContentType("application/json");
-						writeJSONOutput(writer, statuses); 
-						break;
-					}
-					
+					writeOutput(request, response, statuses); 
 				}
 			}
 		}
 		catch (Throwable t) {
-			handleError(response, HttpServletResponse.SC_BAD_REQUEST, "failed to get status", t, writer);
+			handleError(response, HttpServletResponse.SC_BAD_REQUEST, "failed to get status", t, null);
+		}
+	}
+
+	protected StatsFormatter getFormatter(OutputFormat format) {
+		switch (format) {
+		case PLAIN:
+			return new PlainStatsFormatter();
+		default:
+		case HTML:
+			return new HTMLStatsFormatter();
+		case XML:
+			return new XMLStatsFormatter();
+		case JSON:
+			return new JSONStatsFormatter();
+		}
+	}
+	
+	protected void writeOutput(HttpServletRequest request, HttpServletResponse response,
+			Map<String, Map<StatusName, Object>> statuses) throws IOException {
+		PrintWriter writer = null;
+		try {
+			// get output format
+			OutputFormat format = getOutputFormat(request);
+			// get formatter for output format
+			StatsFormatter formatter = getFormatter(format);
+			String contentType = formatter.getContentType();
+			if (contentType != null) {
+				response.setContentType(contentType);
+			}
+			
+			writer = response.getWriter();
+			formatter.writeOutput(writer, statuses);
 		}
 		finally {
 			closeQuietly(writer);
 		}
-	}
-
-	private void writePlainOutput(PrintWriter writer,
-			Map<String, Map<StatusName, Object>> statuses) {
-		if (statuses.size() > 1) {
-			writer.println("Status");
-			writer.println();
-		}
-		
-		for (Map.Entry<String, Map<StatusName, Object>> entry : statuses.entrySet()) {
-			String collectorName = entry.getKey();
-			Map<StatusName, Object> status = entry.getValue();
-			writePlainOutput(writer, collectorName, status);
-		}
-	}
-
-	protected void writePlainOutput(PrintWriter writer,
-			String collectorName, Map<StatusName, Object> status) {
-		writer.println(collectorName);
-		for (Map.Entry<StatusName, Object> entry : status.entrySet()) {
-			StatusName name = entry.getKey();
-			writer.print(name.getShortName());
-			writer.print(": ");
-			Object value = entry.getValue();
-			writer.println(value);
-		}
-		writer.println();
-	}
-
-	protected void writeJSONOutput(PrintWriter writer,
-			Map<String, Map<StatusName, Object>> statuses) {
-		for (Map.Entry<String, Map<StatusName, Object>> entry : statuses.entrySet()) {
-			String collectorName = entry.getKey();
-			Map<StatusName, Object> status = entry.getValue();
-			writeJSONOutput(writer, collectorName, status);
-		}
-	}
-	
-	protected void writeJSONOutput(PrintWriter writer,
-			String collectorName, Map<StatusName, Object> status) {
-		// TODO Auto-generated method stub
-		writer.println("// not yet implemented");
-	}
-
-	protected void writeXMLOutput(PrintWriter writer,
-			Map<String, Map<StatusName, Object>> statuses) {
-		for (Map.Entry<String, Map<StatusName, Object>> entry : statuses.entrySet()) {
-			String collectorName = entry.getKey();
-			Map<StatusName, Object> status = entry.getValue();
-			writeXMLOutput(writer, collectorName, status);
-		}
-	}
-
-	protected void writeXMLOutput(PrintWriter writer,
-			String collectorName, Map<StatusName, Object> status) {
-		writer.print("<collector name=\"");
-		// TODO escape name
-		writer.print(collectorName);
-		writer.println("\">");
-		
-		for (Map.Entry<StatusName, Object> entry : status.entrySet()) {
-			writer.print("<status name=\"");
-			StatusName name = entry.getKey();
-			// TODO escape name
-			writer.print(name.getShortName());
-			writer.print("\" value=\"");
-			Object value = entry.getValue();
-			// TODO escape value
-			writer.print(value);
-			writer.println("\"/>");
-		}
-		
-		writer.println("</collector>");
-
-	}
-
-	protected void writeHTMLOutput(PrintWriter writer,
-			Map<String, Map<StatusName, Object>> statuses) {
-		writer.println("<html>");
-		writer.print("<head><title>");
-		writer.print("Status");
-		writer.print("</title></head>");
-		writer.println("<body>");
-		if (statuses.size() > 1) {
-			writer.println("<h1><a name=\"top\">Status</a></h1>");
-		}
-		
-		for (Map.Entry<String, Map<StatusName, Object>> entry : statuses.entrySet()) {
-			String collectorName = entry.getKey();
-			Map<StatusName, Object> status = entry.getValue();
-			writeHTMLOutput(writer, collectorName, status);
-		}
-		writer.println("</body>");
-		writer.println("</html>");
-	}
-
-	protected void writeHTMLOutput(PrintWriter writer,
-			String collectorName, Map<StatusName, Object> status) {
-		writer.print("<h2><a name=\"");
-		writer.print(collectorName);
-		writer.print("\">");
-		writer.print(collectorName);
-		writer.print("</a></h2>");
-		writer.println("<p>");
-		
-		writer.println("<table>");
-		
-		for (Map.Entry<StatusName, Object> entry : status.entrySet()) {
-			writer.println("<tr>");
-			writer.print("<td>");
-			StatusName name = entry.getKey();
-			writer.print(name.getShortName());
-			writer.println("</td>");
-			writer.print("<td>");
-			Object value = entry.getValue();
-			writer.print(value);
-			writer.println("</td>");
-			writer.println("</tr>");
-		}
-		
-		writer.println("</table>");
-		
-		writer.println("</p>");
 	}
 
 	protected List<StatusCollector> getCollectors(HttpServletRequest request) {
