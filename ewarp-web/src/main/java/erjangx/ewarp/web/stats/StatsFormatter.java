@@ -1,4 +1,4 @@
-package erjangx.ewarp.web;
+package erjangx.ewarp.web.stats;
 
 import java.io.PrintWriter;
 import java.util.Map;

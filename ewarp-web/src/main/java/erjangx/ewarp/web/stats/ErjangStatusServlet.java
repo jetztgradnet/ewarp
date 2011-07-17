@@ -1,4 +1,4 @@
-package erjangx.ewarp.web;
+package erjangx.ewarp.web.stats;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,6 +18,7 @@ import erjangx.ewarp.runtime.stats.NodeCollector;
 import erjangx.ewarp.runtime.stats.ProcessCollector;
 import erjangx.ewarp.runtime.stats.StatusCollector;
 import erjangx.ewarp.runtime.stats.StatusName;
+import erjangx.ewarp.web.ErjangBaseServlet;
 
 public class ErjangStatusServlet extends ErjangBaseServlet {
 	private static final long serialVersionUID = 1L;

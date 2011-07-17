@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import erjangx.ewarp.runtime.ErjangRuntime;
+import erjangx.ewarp.web.stats.OutputFormat;
 
 public abstract class ErjangBaseServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;

@@ -11,7 +11,7 @@
 	</listener>
 	<servlet>
 		<servlet-name>status</servlet-name>
-		<servlet-class>erjangx.ewarp.web.ErjangStatusServlet</servlet-class>
+		<servlet-class>erjangx.ewarp.web.stats.ErjangStatusServlet</servlet-class>
 		<!-- 
 		<init-param>
 			<param-name>title</param-name>

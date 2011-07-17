@@ -1,34 +1,14 @@
-package erjangx.ewarp.web;
+package erjangx.ewarp.web.stats;
 
 import java.io.PrintWriter;
 import java.util.Map;
 
 import erjangx.ewarp.runtime.stats.StatusName;
 
-public class XMLStatsFormatter extends AbstractStatsFormatter {
+public class JSONStatsFormatter extends AbstractStatsFormatter {
 
-	public XMLStatsFormatter() {
-		super(OutputFormat.XML, "text/xml");
-	}
-
-	/* (non-Javadoc)
-	 * @see erjangx.ewarp.web.AbstractStatsFormatter#doWriteStatusName(java.io.PrintWriter, java.lang.String)
-	 */
-	@Override
-	protected void doWriteStatusName(PrintWriter writer, String name) {
-		writer.print("<name>");
-		writer.print(escapeText(name));
-		writer.println("</name>");
-	}
-
-	/* (non-Javadoc)
-	 * @see erjangx.ewarp.web.AbstractStatsFormatter#doWriteValue(java.io.PrintWriter, java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	protected void doWriteValue(PrintWriter writer, Object name, Object value) {
-		writer.print("<value>");
-		super.doWriteValue(writer, name, value);
-		writer.println("</value>");
+	public JSONStatsFormatter() {
+		super(OutputFormat.JSON, "application/json");
 	}
 	
 	/* (non-Javadoc)
@@ -37,7 +17,7 @@ public class XMLStatsFormatter extends AbstractStatsFormatter {
 	@Override
 	protected void startDocument(PrintWriter writer,
 			Map<String, Map<StatusName, Object>> statuses) {
-		writer.println("<status>");
+		writer.println("{");
 	}
 	
 	/* (non-Javadoc)
@@ -46,7 +26,23 @@ public class XMLStatsFormatter extends AbstractStatsFormatter {
 	@Override
 	protected void endDocument(PrintWriter writer,
 			Map<String, Map<StatusName, Object>> statuses) {
-		writer.println("</status>");
+		writer.println("}");
+	}
+	
+	@Override
+	protected void doWriteStatusName(PrintWriter writer, String name) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/* (non-Javadoc)
+	 * @see erjangx.ewarp.web.AbstractStatsFormatter#doWriteValue(java.io.PrintWriter, java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	protected void doWriteValue(PrintWriter writer, Object name, Object value) {
+		writer.print("\"");
+		super.doWriteValue(writer, name, value);
+		writer.print("\"");
 	}
 
 	/* (non-Javadoc)
@@ -55,10 +51,9 @@ public class XMLStatsFormatter extends AbstractStatsFormatter {
 	@Override
 	protected void startSection(PrintWriter writer, String section,
 			Map<StatusName, Object> status) {
-		writer.print("<collector name=\"");
-		writer.print(escapeText(section));
-		writer.println("\">");
-
+		writer.print("{");
+		writer.print(section);
+		writer.println(": ");
 	}
 	
 	/* (non-Javadoc)
@@ -67,6 +62,7 @@ public class XMLStatsFormatter extends AbstractStatsFormatter {
 	@Override
 	protected void endSection(PrintWriter writer, String collectorName,
 			Map<StatusName, Object> status) {
-		writer.println("</collector>");
+		writer.println("}");
 	}
+
 }

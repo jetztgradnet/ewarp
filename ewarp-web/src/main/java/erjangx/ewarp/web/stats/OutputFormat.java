@@ -1,4 +1,4 @@
-package erjangx.ewarp.web;
+package erjangx.ewarp.web.stats;
 
 public enum OutputFormat {
 	PLAIN,
