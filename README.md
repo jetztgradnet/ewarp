@@ -40,35 +40,35 @@ This project is currently work in progress.
 
 **Note**: as this is work in progress, there are not yet full instructions...
 
-1. Get and build Erjang from GitHub:
+Get and build Erjang from GitHub:
 
-		# get source code
-		git clone https://github.com/trifork/erjang.git
-		cd erjang
-		# modify erjang_cfg.properties to point to your Erlang installation,
-		vi erjang_cfg.properties
-		# then build Erjang and a jar containing the Erlang runtime
-		ant jar otpjar
+	# get source code
+	git clone https://github.com/trifork/erjang.git
+	cd erjang
+	# modify erjang_cfg.properties to point to your Erlang installation,
+	vi erjang_cfg.properties
+	# then build Erjang and a jar containing the Erlang runtime
+	ant jar otpjar
 
 This creates `erjang-0.1.jar` as well as `otp-<OTPVERSION>.jar`
 
-2. Get and build ewarp and the sample application from GitHub:
+Get and build ewarp and the sample application from GitHub:
 Build using [Gradle](http://www.gradle.org/), which is downloaded automatically, when called as ./gradlew
 
-		# get source code
-		git clone https://github.com/jetztgradnet/ewarp.git
-		cd ewarp
-		# modify gradle.properties to specify Erjang and OTP versions
-		vi gradle.properties
-		# build ewarp and the sample project
-		./gradlew
+	# get source code
+	git clone https://github.com/jetztgradnet/ewarp.git
+	cd ewarp
+	# modify gradle.properties to specify Erjang and OTP versions
+	vi gradle.properties
+	# build ewarp and the sample project
+	./gradlew
 
 This produces both the ewarp jar files as well as 
 
-3. Upload the created .WAR-file (`ewarp-example-web/build/libs/ewarp-example-web-0.1.war`) to your Servlet container (e.g. Tomcat or Jetty)
+Upload the created .WAR-file (`ewarp-example-web/build/libs/ewarp-example-web-0.1.war`) to your Servlet container (e.g. Tomcat or Jetty)
 The Gradle-based build allows to run the WAR file inline using the following command:
 
-		./gradlew jettyRun
+	./gradlew jettyRun
 
 
 ## How to use
@@ -81,60 +81,60 @@ In order to create and start the Erjang runtime, `erjangx.ewarp.web.ErjangContex
 
 Example of a `WEB-INF/web.xml`:
 
-		<?xml version="1.0" encoding="UTF-8"?>
-		<web-app xmlns="http://java.sun.com/xml/ns/javaee"
-			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-			version="2.5">
-			<display-name>Erlang Web Application</display-name>
-			<listener>
-				<listener-class>erjangx.ewarp.web.ErjangContextListener</listener-class>
-			</listener>
-			<servlet>
-				<servlet-name>status</servlet-name>
-				<servlet-class>erjangx.ewarp.web.stats.ErjangStatusServlet</servlet-class>
-			</servlet>
-			<servlet-mapping>
-				<servlet-name>status</servlet-name>
-				<url-pattern>/status/*</url-pattern>
-			</servlet-mapping>
-	
-			<servlet-mapping>
-				<servlet-name>status</servlet-name>
-				<url-pattern>/status</url-pattern>
-			</servlet-mapping>
-		</web-app>
+	<?xml version="1.0" encoding="UTF-8"?>
+	<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+		version="2.5">
+		<display-name>Erlang Web Application</display-name>
+		<listener>
+			<listener-class>erjangx.ewarp.web.ErjangContextListener</listener-class>
+		</listener>
+		<servlet>
+			<servlet-name>status</servlet-name>
+			<servlet-class>erjangx.ewarp.web.stats.ErjangStatusServlet</servlet-class>
+		</servlet>
+		<servlet-mapping>
+			<servlet-name>status</servlet-name>
+			<url-pattern>/status/*</url-pattern>
+		</servlet-mapping>
+
+		<servlet-mapping>
+			<servlet-name>status</servlet-name>
+			<url-pattern>/status</url-pattern>
+		</servlet-mapping>
+	</web-app>
 
 ## How to include your Erlang app
 
 Create a release, e.g. using [rebar](https://github.com/basho/rebar). Then package this release into a Jar file with a ant build script similar to the [one from Erjang](https://github.com/trifork/erjang/blob/master/build.xml):
 
-		<project name="erjang" default="all">
-			<property file="erjang.properties" />
-			<target name="otpjar">
-				<jar jarfile="otp-${erjang.otp.version}.jar" basedir="${erjang.otp.root}">
-					<exclude name="**/*.so" />
-					<exclude name="**/*.dll" />
-					<exclude name="**/*.a" />
-					<exclude name="**/*.erl" />
-					<exclude name="**/bin/beam" />
-					<exclude name="**/bin/beam.smp" />
-					<exclude name="lib/megaco-*/**" />
-					<exclude name="lib/wx-*/**" />
-					<exclude name="lib/hipe-*/**" />
-					<exclude name="lib/jinterface-*/**" />
-					<exclude name="lib/erl_interface-*/**" />
-					<exclude name="lib/ic-*/java_src/**" />
-					<exclude name="usr/include/**" />
-					<exclude name="**/examples/**" />
-				</jar>
-			</target>
-		</project>
+	<project name="erjang" default="all">
+		<property file="erjang.properties" />
+		<target name="otpjar">
+			<jar jarfile="otp-${erjang.otp.version}.jar" basedir="${erjang.otp.root}">
+				<exclude name="**/*.so" />
+				<exclude name="**/*.dll" />
+				<exclude name="**/*.a" />
+				<exclude name="**/*.erl" />
+				<exclude name="**/bin/beam" />
+				<exclude name="**/bin/beam.smp" />
+				<exclude name="lib/megaco-*/**" />
+				<exclude name="lib/wx-*/**" />
+				<exclude name="lib/hipe-*/**" />
+				<exclude name="lib/jinterface-*/**" />
+				<exclude name="lib/erl_interface-*/**" />
+				<exclude name="lib/ic-*/java_src/**" />
+				<exclude name="usr/include/**" />
+				<exclude name="**/examples/**" />
+			</jar>
+		</target>
+	</project>
 
 Create a file `erjang.properties` to specify OTP version and root dir, which is the one containing your release:
 
-		erjang.otp.version=R13B04
-		erjang.otp.root=rel/myapp
+	erjang.otp.version=R13B04
+	erjang.otp.root=rel/myapp
 
 Create the application jar file using `ant otpjar` and place the created jar file in your app's `WEB-INF/lib` directory.
 
@@ -142,8 +142,8 @@ Create the application jar file using `ant otpjar` and place the created jar fil
 
 When developing using Eclipse and WTP, the best way is to let Gradle generate Eclipse projects for the projects:
 
-		cd ewarp
-		gradle eclipse
+	cd ewarp
+	gradle eclipse
 
 These can now be imported into Eclipse using `File -> Import...`.
 
