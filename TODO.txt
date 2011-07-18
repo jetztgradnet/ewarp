@@ -1,0 +1,8 @@
+* use NodeNameResolver, provide some defaults
+* use NodeAdvertiser, provide some defaults
+* redirect SASL logs to java.util.logging
+* rebar-Template (e.g. based on https://github.com/etnt/rebar_templates/blob/master/yawsweb.template)
+  see http://www.redhoterlang.com/entry/93c0d68814f9d92b2560492529fd14dd
+* use Erjang and OTP jars from a Maven repository instead of from a checked out project,
+  also provide ewarp binaries in a Maven repository
+* pre-compiled OTP .beam->.class
