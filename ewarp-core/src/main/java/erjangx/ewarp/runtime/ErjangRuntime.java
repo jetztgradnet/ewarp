@@ -18,6 +18,7 @@ import erjang.RPC;
 import erjangx.ewarp.cluster.NodeFinder;
 import erjangx.ewarp.cluster.NodeListener;
 import erjangx.ewarp.cluster.NodeManager;
+import erjangx.ewarp.cluster.NodeNameResolver;
 import erjangx.ewarp.util.Util;
 
 /**
@@ -132,6 +133,20 @@ public class ErjangRuntime implements NodeListener, Settings {
 	}
 
 	protected String determineNodeName() {
+		String nodeName = null;
+		NodeNameResolver resolver = getNodeNameResolver();
+		if (resolver != null) {
+			nodeName = resolver.getNodeName();
+		}
+		else {
+			log.debug("no NodeNameResolver found, using default node name: " + nodeName);
+			nodeName = DEFAULT_NODENAME;
+		}
+		return nodeName;
+	}
+
+	protected NodeNameResolver getNodeNameResolver() {
+		// TODO determine NodeNameResolver from settings and create an instance
 		return null;
 	}
 
