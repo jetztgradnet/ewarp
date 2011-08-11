@@ -1,6 +1,7 @@
 [
 	'ewarp-core',
 	'ewarp-web',
+	'ewarp-web-bridge',
 	'ewarp-example-web',
 ].each { project -> 
 	include project

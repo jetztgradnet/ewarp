@@ -17,20 +17,24 @@ This project is currently work in progress.
 ## code structure
 
 * ewarp-core
-
 	Core module containing the runtime handling, node discovery, ...
+
 * ewarp-web
 
 	Web runtime adapter to start Erjang in a Java Servlet container, e.g. Tomcat
+
+* ewarp-web-bridge
+
+	Bridges HTTP requests into the Erlang code. Uses [simple_bridge](https://github.com/nitrogen/simple_bridge) on the inside
+
 * ewarp-example-web
 
 	Sample application
-* ewarp-web-bridge (planned)
 
-	Bridges HTTP requests into the Erlang code
 * ewarp-aws (planned)
 
 	Node discovery and advertising in a Amazon EC2/Elastic Beanstalk environment
+
 * ewarp-osgi (planned)
 
 	Runtime adapter to start Erjang in an OSGi environment, e.g. Eclipse Equinox or Apache Felix
