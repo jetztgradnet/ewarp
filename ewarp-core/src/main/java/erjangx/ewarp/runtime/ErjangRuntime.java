@@ -283,6 +283,100 @@ public class ErjangRuntime implements NodeListener, Settings {
 	protected Properties getRuntimeProps() {
 		return runtimeProps;
 	}
+	
+	protected String getRuntimeProperty(String name, String defVal) {
+		return getRuntimeProperty(runtimeProps, name, defVal);
+	}
+	
+	protected String getRuntimeProperty(Properties props, String name, String defVal) {
+		String value = defVal;
+		
+		if (props != null) {
+			value = props.getProperty(name, defVal);
+		}
+		
+		return value;
+	}
+	
+	protected int getRuntimePropertyAsInt(String name, int defVal) {
+		return getRuntimePropertyAsInt(runtimeProps, name, defVal);
+	}
+	
+	protected int getRuntimePropertyAsInt(Properties props, String name, int defVal) {
+		int value = defVal;
+		
+		String v = getRuntimeProperty(props, name, null);
+		if (v != null) {
+			try {
+				value = Integer.parseInt(v);
+			}
+			catch (Throwable t) {
+				// ignore
+			}
+		}
+		
+		return value;
+	}
+	
+	protected double getRuntimePropertyAsDouble(String name, double defVal) {
+		return getRuntimePropertyAsDouble(runtimeProps, name, defVal);
+	}
+	
+	protected double getRuntimePropertyAsDouble(Properties props, String name, double defVal) {
+		double value = defVal;
+		
+		String v = getRuntimeProperty(props, name, null);
+		if (v != null) {
+			try {
+				value = Double.parseDouble(v);
+			}
+			catch (Throwable t) {
+				// ignore
+			}
+		}
+		
+		return value;
+	}
+	
+	protected Boolean getRuntimePropertyAsBoolean(String name, Boolean defVal) {
+		return getRuntimePropertyAsBoolean(runtimeProps, name, defVal);
+	}
+	
+	protected Boolean getRuntimePropertyAsBoolean(Properties props, String name, Boolean defVal) {
+		Boolean value = defVal;
+		
+		String v = getRuntimeProperty(props, name, null);
+		if (v != null) {
+			try {
+				value = Boolean.valueOf(v);
+			}
+			catch (Throwable t) {
+				// ignore
+			}
+		}
+		
+		return value;
+	}
+	
+	protected boolean getRuntimePropertyAsBoolean(String name, boolean defVal) {
+		return getRuntimePropertyAsBoolean(runtimeProps, name, defVal);
+	}
+	
+	protected boolean getRuntimePropertyAsBoolean(Properties props, String name, boolean defVal) {
+		boolean value = defVal;
+		
+		String v = getRuntimeProperty(props, name, null);
+		if (v != null) {
+			try {
+				value = Boolean.parseBoolean(v);
+			}
+			catch (Throwable t) {
+				// ignore
+			}
+		}
+		
+		return value;
+	}
 
 	public void start() {
 		interceptor.preStart();
