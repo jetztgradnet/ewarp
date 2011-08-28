@@ -25,9 +25,32 @@ public interface Settings {
 	 * OTP version used by Erjang.
 	 */
 	public static final String ERJANG_OTP_VERSION = "erjang.otp.version";
-
+	
+	
+	/**
+	 * Nodename.
+	 */
+	public static final String ERJANG_ARG_NODENAME = "erjang.nodename";
+	
 	/**
 	 * Default node name (local part) to be used if nothing is specified.
 	 */
-	public static final String DEFAULT_NODENAME = "node";
+	public static final String ERJANG_DEFAULT_NODENAME = "node";
+	
+	/**
+	 * Specifies whether to use short name (<code>true</code>) or long name (<code>false</code>)
+	 */
+	public static final String ERJANG_ARG_USERSHORTNAME = "erjang.shortname";
+	
+	/**
+	 * Cookie.
+	 */
+	public static final String ERJANG_ARG_COOKIE = "erjang.cookie";
+	
+	/**
+	 * Default cookie: none.
+	 */
+	public static final String ERJANG_DEFAULT_COOKIE = null;
+
+	
 }

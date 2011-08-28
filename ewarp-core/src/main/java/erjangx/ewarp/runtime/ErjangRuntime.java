@@ -73,7 +73,7 @@ public class ErjangRuntime implements NodeListener, Settings {
 	}
 
 	protected void configureCluster(Properties props, List<String> args) {
-		String nodeName = Util.getCanonicalString(determineNodeName());
+		String nodeName = Util.getCanonicalString(determineNodeName(props));
 		if (nodeName == null) {
 			return;
 		}
@@ -90,62 +90,100 @@ public class ErjangRuntime implements NodeListener, Settings {
 		}
 
 		if (namePart == null) {
-			namePart = DEFAULT_NODENAME;
+			namePart = ERJANG_DEFAULT_NODENAME;
 		}
-		if (nodePart == null) {
-			InetAddress localAddress;
-			try {
-				localAddress = InetAddress.getLocalHost();
-				nodePart = localAddress.getHostName();
-				//nodePart = localAddress.getCanonicalHostName();
+		
+		// determine whether to use long or short name
+		Boolean shortName = getRuntimePropertyAsBoolean(props, ERJANG_ARG_USERSHORTNAME, null);
+		if (shortName != null) {
+			if (shortName.booleanValue()) {
+				// short name, remove node part
+				nodePart = null;
 			}
-			catch (UnknownHostException e) {
-				nodePart = "localhost";
-
-				log.error("failed to determine local host name: " + e.getMessage());
-				log.debug("details: ", e);
+			else {
+				// long name, require nodePart
+				if (nodePart == null) {
+					nodePart = getLocalHostName();
+				}
 			}
-		}
-		nodeName = namePart + "@" + nodePart;
-		if (nodePart.contains(".")) {
-			// host name is fully qualified (contains at least one dot)
-			args.add("-name");
 		}
 		else {
+			// auto-mode
+			if (nodePart == null) {
+				nodePart = getLocalHostName();
+			}
+			// determine whether host name is a full domain name or a simple host name
+			shortName = Boolean.valueOf(!nodePart.contains("."));
+		}
+		
+		if (shortName.booleanValue()
+			|| (nodePart == null)) {
 			// non-qualified host name, use short name
 			args.add("-sname");
 		}
+		else {
+			// host name is fully qualified (contains at least one dot)
+			args.add("-name");
+			// create node name
+			nodeName = namePart + "@" + nodePart;
+		}
 		args.add(nodeName);
 
-		String cookie = Util.getCanonicalString(determineCookie());
+		String cookie = Util.getCanonicalString(determineCookie(props));
 		if (cookie != null) { 
 			args.add("-setcookie");
 			args.add(cookie);
 		}
 	}
 	
+	protected String getLocalHostName() {
+		String nodePart = null;
+		InetAddress localAddress;
+		try {
+			localAddress = InetAddress.getLocalHost();
+			nodePart = localAddress.getHostName();
+			//nodePart = localAddress.getCanonicalHostName();
+		}
+		catch (UnknownHostException e) {
+			nodePart = "localhost";
+
+			log.error("failed to determine local host name: " + e.getMessage());
+			log.debug("details: ", e);
+		}
+		
+		return nodePart;
+	}
+
 	protected void configureAndStartNodeFinders(Properties props) {
 		// TODO create and configure NodeFinders
 	}
 
-	private String determineCookie() {
-		return null;
+	protected String determineCookie(Properties props) {
+		String cookie = getRuntimeProperty(props, ERJANG_ARG_COOKIE, null);
+		if (cookie == null) {
+			cookie = ERJANG_DEFAULT_COOKIE;
+		}
+		return cookie;
 	}
 
-	protected String determineNodeName() {
+	protected String determineNodeName(Properties props) {
 		String nodeName = null;
-		NodeNameResolver resolver = getNodeNameResolver();
+		NodeNameResolver resolver = getNodeNameResolver(props);
 		if (resolver != null) {
 			nodeName = resolver.getNodeName();
 		}
-		else {
+		if (nodeName == null) {
+			// no node name yet, check args
+			nodeName = getRuntimeProps().getProperty(ERJANG_ARG_NODENAME);
+		}
+		if (nodeName == null) {
 			log.debug("no NodeNameResolver found, using default node name: " + nodeName);
-			nodeName = DEFAULT_NODENAME;
+			nodeName = ERJANG_DEFAULT_NODENAME;
 		}
 		return nodeName;
 	}
 
-	protected NodeNameResolver getNodeNameResolver() {
+	protected NodeNameResolver getNodeNameResolver(Properties props) {
 		// TODO determine NodeNameResolver from settings and create an instance
 		return null;
 	}
