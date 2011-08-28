@@ -3,6 +3,7 @@
 	'ewarp-web',
 	'ewarp-web-bridge',
 	'ewarp-example-web',
+	'ewarp-example-web-bridge',
 ].each { project -> 
 	include project
 }
