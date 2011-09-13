@@ -1,0 +1,12 @@
+{application, servlet_bridge,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { servlet_bridge, []}},
+  {env, []}
+ ]}.
