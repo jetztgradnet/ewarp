@@ -209,7 +209,7 @@ public class ErjangRuntime implements NodeListener, Settings {
 		args.add("+A");
 		args.add("2");
 
-		// size of async thread pool
+		// size of sync thread pool
 		args.add("+S");
 		args.add("1");
 
@@ -284,7 +284,6 @@ public class ErjangRuntime implements NodeListener, Settings {
 		List<String> args = new ArrayList<String>();
 		configureErjang(runtimeProps, args);
 		runtimeArgs = (String[]) args.toArray(new String[args.size()]);
-		
 	}
 	
 	protected void createLifecycleInterceptor(Properties props) {
@@ -320,6 +319,14 @@ public class ErjangRuntime implements NodeListener, Settings {
 	
 	protected Properties getRuntimeProps() {
 		return runtimeProps;
+	}
+	
+	protected boolean hasRuntimeProperty(String name) {
+		return hasRuntimeProperty(runtimeProps, name);
+	}
+	
+	protected boolean hasRuntimeProperty(Properties props, String name) {
+		return props.containsKey(name);
 	}
 	
 	protected String getRuntimeProperty(String name, String defVal) {
