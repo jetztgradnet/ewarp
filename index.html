@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Ewarp by jetztgradnet</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Ewarp</h1>
+<p>Erlang WAR packager: packages Erlang applications into Java WAR files using Erjang</p>
+        <p class="view"><a href="https://github.com/jetztgradnet/ewarp">View the Project on GitHub <small>jetztgradnet/ewarp</small></a></p>
+        <ul>
+          <li><a href="https://github.com/jetztgradnet/ewarp/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/jetztgradnet/ewarp/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/jetztgradnet/ewarp">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>ewarp: Erlang WAR packager</h1>
+
+<p>Package Erlang apps as <a href="http://en.wikipedia.org/wiki/WAR_%28Sun_file_format%29">Java WAR</a> file with an embedded <a href="http://erjang.org">Erjang</a> runtime. The WAR file can be run on any standard Java servlet container, such as <a href="http://tomcat.apache.org/">Tomcat</a> or <a href="http://jetty.codehaus.org/jetty/">Jetty</a>. Deployment in the cloud (PaaS) is easy using a WAR file. Popular options are <a href="http://aws.amazon.com/elasticbeanstalk/">Amazon Elastic Beanstalk</a> and <a href="http://www.cloudfoundry.com/">CloudFoundry</a>. The Erlang app does not necessarily need to be Web-aware, the servlet container simply acts as a convenient and standardized runtime container, which is provided by many (cloud) hosting providers. </p>
+
+<p>This project is currently work in progress.</p>
+
+<h2>Planned feature set:</h2>
+
+<ul>
+<li>Single script call to create a WAR file from a simple Erlang app. Possibly integration with <a href="https://github.com/basho/rebar">rebar</a>
+</li>
+<li>Many customization options</li>
+<li>Automatic cluster management in cloud environments via customizable NodeFinders. Example: all nodes in a Elastic Beanstalk environment can be found via the Amazon EC2 and Beanstalk APIs and are automatically made known</li>
+<li>Full access to the Java world and additional libraries/frameworks</li>
+<li>Java-Erlang web bridge, possibly using <a href="https://github.com/nitrogen/simple_bridge">SimpleBridge</a> or <a href="https://github.com/skarab/ewgi">EWGI</a>
+</li>
+<li>Triggering of Erlang functions on startup/shutdown/specified web calls</li>
+<li>running Erlang apps in an OSGi container</li>
+</ul><h2>code structure</h2>
+
+<ul>
+<li>
+<p>ewarp-core</p>
+
+<p>Core module containing the runtime handling, node discovery, ...</p>
+</li>
+<li>
+<p>ewarp-web</p>
+
+<p>Web runtime adapter to start Erjang in a Java Servlet container, e.g. Tomcat</p>
+</li>
+<li>
+<p>ewarp-example-web</p>
+
+<p>Sample application</p>
+</li>
+<li>
+<p>ewarp-web-bridge (planned)</p>
+
+<p>Bridges HTTP requests into the Erlang code</p>
+</li>
+<li>
+<p>ewarp-aws (planned)</p>
+
+<p>Node discovery and advertising in a Amazon EC2/Elastic Beanstalk environment</p>
+</li>
+<li>
+<p>ewarp-osgi (planned)</p>
+
+<p>Runtime adapter to start Erjang in an OSGi environment, e.g. Eclipse Equinox or Apache Felix</p>
+</li>
+</ul><h2>How to build</h2>
+
+<p><strong>Note</strong>: as this is work in progress, there are not yet full instructions...</p>
+
+<p>Get and build Erjang from GitHub:</p>
+
+<pre><code># get source code
+git clone <a href="https://github.com/trifork/erjang.git">https://github.com/trifork/erjang.git</a>
+cd erjang
+# modify erjang_cfg.properties to point to your Erlang installation,
+vi erjang_cfg.properties
+# then build Erjang and a jar containing the Erlang runtime
+ant jar otpjar
+</code></pre>
+
+<p>This creates <code>erjang-0.1.jar</code> as well as <code>otp-&lt;OTPVERSION&gt;.jar</code></p>
+
+<p>Get and build ewarp and the sample application from GitHub:
+Build using <a href="http://www.gradle.org/">Gradle</a>, which is downloaded automatically, when called as ./gradlew</p>
+
+<pre><code># get source code
+git clone <a href="https://github.com/jetztgradnet/ewarp.git">https://github.com/jetztgradnet/ewarp.git</a>
+cd ewarp
+# modify gradle.properties to specify Erjang and OTP versions
+vi gradle.properties
+# build ewarp and the sample project
+./gradlew
+</code></pre>
+
+<p>This produces both the ewarp jar files as well as </p>
+
+<p>Upload the created .WAR-file (<code>ewarp-example-web/build/libs/ewarp-example-web-0.1.war</code>) to your Servlet container (e.g. Tomcat or Jetty)
+The Gradle-based build allows to run the WAR file inline using the following command:</p>
+
+<pre><code>./gradlew jettyRun
+</code></pre>
+
+<h2>How to use</h2>
+
+<p>See project <a href="https://github.com/jetztgradnet/ewarp/tree/master/ewarp-example-web">ewarp-example-web</a> for an example application. It can be build from the ewarp-example-web directory using <code>./gradlew war</code>.</p>
+
+<p>Basically, create a web application, with <code>erjang-0.1.jar</code>, <code>ewarp-core-0.1.jar</code>, <code>ewarp-web-0.1.jar</code>, and a jar file with your prefered OTP version, e.g. <code>otp-R13B04.jar</code> contained in <code>WEB-INF/lib</code>.</p>
+
+<p>In order to create and start the Erjang runtime, <code>erjangx.ewarp.web.ErjangContextListener</code> should be registered as ServletContextListener. Additionally, the servlet erjangx.ewarp.web.stats.ErjangStatusServlet may be registered to provide some runtime information.</p>
+
+<p>Example of a <code>WEB-INF/web.xml</code>:</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns="<a href="http://java.sun.com/xml/ns/javaee">http://java.sun.com/xml/ns/javaee</a>"
+    xmlns:xsi="<a href="http://www.w3.org/2001/XMLSchema-instance">http://www.w3.org/2001/XMLSchema-instance</a>"
+    xsi:schemaLocation="<a href="http://java.sun.com/xml/ns/javaee">http://java.sun.com/xml/ns/javaee</a> <a href="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd</a>"
+    version="2.5"&gt;
+    &lt;display-name&gt;Erlang Web Application&lt;/display-name&gt;
+    &lt;listener&gt;
+        &lt;listener-class&gt;erjangx.ewarp.web.ErjangContextListener&lt;/listener-class&gt;
+    &lt;/listener&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;status&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;erjangx.ewarp.web.stats.ErjangStatusServlet&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;status&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/status/*&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;status&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/status&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre>
+
+<h2>How to include your Erlang app</h2>
+
+<p>Create a release, e.g. using <a href="https://github.com/basho/rebar">rebar</a>. Then package this release into a Jar file with a ant build script similar to the <a href="https://github.com/trifork/erjang/blob/master/build.xml">one from Erjang</a>:</p>
+
+<pre><code>&lt;project name="erjang" default="all"&gt;
+    &lt;property file="erjang.properties" /&gt;
+    &lt;target name="otpjar"&gt;
+        &lt;jar jarfile="otp-${erjang.otp.version}.jar" basedir="${erjang.otp.root}"&gt;
+            &lt;exclude name="**/*.so" /&gt;
+            &lt;exclude name="**/*.dll" /&gt;
+            &lt;exclude name="**/*.a" /&gt;
+            &lt;exclude name="**/*.erl" /&gt;
+            &lt;exclude name="**/bin/beam" /&gt;
+            &lt;exclude name="**/bin/beam.smp" /&gt;
+            &lt;exclude name="lib/megaco-*/**" /&gt;
+            &lt;exclude name="lib/wx-*/**" /&gt;
+            &lt;exclude name="lib/hipe-*/**" /&gt;
+            &lt;exclude name="lib/jinterface-*/**" /&gt;
+            &lt;exclude name="lib/erl_interface-*/**" /&gt;
+            &lt;exclude name="lib/ic-*/java_src/**" /&gt;
+            &lt;exclude name="usr/include/**" /&gt;
+            &lt;exclude name="**/examples/**" /&gt;
+        &lt;/jar&gt;
+    &lt;/target&gt;
+&lt;/project&gt;
+</code></pre>
+
+<p>Create a file <code>erjang.properties</code> to specify OTP version and root dir, which is the one containing your release:</p>
+
+<pre><code>erjang.otp.version=R13B04
+erjang.otp.root=rel/myapp
+</code></pre>
+
+<p>Create the application jar file using <code>ant otpjar</code> and place the created jar file in your app's <code>WEB-INF/lib</code> directory.</p>
+
+<h2>How to use in Eclipse</h2>
+
+<p>When developing using Eclipse and WTP, the best way is to let Gradle generate Eclipse projects for the projects:</p>
+
+<pre><code>cd ewarp
+gradle eclipse
+</code></pre>
+
+<p>These can now be imported into Eclipse using <code>File -&gt; Import...</code>.</p>
+
+<p>Create a Web Project using <code>File -&gt; New...</code>, choose <code>Dynamic Web Project</code>. Add the ewarp projects as (web) dependencies to your project. Now you can create a Server (e.g. with Tomcat 6.0) and run and debug your project.</p>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/jetztgradnet">jetztgradnet</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
