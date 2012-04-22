@@ -12,7 +12,7 @@ import erjang.EString;
 public class EConvert {
 	public static List<EObject> toList(ECons cons) {
 		List<EObject> list = new LinkedList<EObject>();
-		for (Iterator<EObject> it = new EObjectIterator(cons); it.hasNext();) {
+		for (Iterator<EObject> it = cons.iterator(); it.hasNext();) {
 			EObject object = it.next();
 			list.add(object);
 		}

@@ -7,9 +7,9 @@ import java.util.Map;
 
 import erjang.ECons;
 import erjang.EObject;
+import erjang.EObjectIterator;
 import erjang.ESeq;
 import erjangx.ewarp.runtime.ErjangRuntime;
-import erjangx.ewarp.util.EObjectIterator;
 
 /**
  * Collector for data, which is returned as list ({@link ECons} or {@link ESeq}). 
